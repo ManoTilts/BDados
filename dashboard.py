@@ -89,11 +89,11 @@ def carregar_dados():
     # Query 4: Vendas ao longo do tempo (por mês)
     query_tempo = """
     SELECT 
-        DATE_FORMAT(p.data_pedido, '%%Y-%%m-01') as mes,
+        DATE_FORMAT(p.data_pedido, '%Y-%m-01') as mes,
         COUNT(p.id_pedido) AS total_pedidos,
         SUM(p.valor_total) AS receita
     FROM pedidos p
-    GROUP BY DATE_FORMAT(p.data_pedido, '%%Y-%%m-01')
+    GROUP BY DATE_FORMAT(p.data_pedido, '%Y-%m-01')
     ORDER BY mes
     """
     df_tempo = pd.read_sql_query(query_tempo, conn)
