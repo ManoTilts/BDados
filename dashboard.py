@@ -97,7 +97,7 @@ def carregar_dados():
     ORDER BY mes
     """
     df_tempo = pd.read_sql_query(query_tempo, conn)
-    df_tempo['mes'] = pd.to_datetime(df_tempo['mes'], format='%Y-%m-%d')
+    df_tempo['mes'] = pd.to_datetime(df_tempo['mes'])
     
     # Query 5: Status dos Pedidos
     query_status = """
