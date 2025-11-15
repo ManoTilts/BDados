@@ -93,7 +93,7 @@ def carregar_dados():
         COUNT(p.id_pedido) AS total_pedidos,
         SUM(p.valor_total) AS receita
     FROM pedidos p
-    GROUP BY mes
+    GROUP BY DATE_FORMAT(p.data_pedido, '%%Y-%%m-01')
     ORDER BY mes
     """
     df_tempo = pd.read_sql_query(query_tempo, conn)
