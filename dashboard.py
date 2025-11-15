@@ -38,6 +38,9 @@ def get_connection():
 
 def carregar_dados():
     """Carrega todos os dados necessários para o dashboard"""
+    import warnings
+    warnings.filterwarnings('ignore', message='.*pandas only supports SQLAlchemy.*')
+    
     conn = get_connection()
     
     # Query 1: Vendas por Categoria
@@ -46,7 +49,7 @@ def carregar_dados():
         prod.categoria,
         COUNT(DISTINCT ip.id_pedido) AS total_pedidos,
         SUM(ip.quantidade) AS quantidade_vendida,
-        SUM(ip.subtotal) AS receita_total
+        CAST(SUM(ip.subtotal) AS DECIMAL(10,2)) AS receita_total
     FROM produtos prod
     INNER JOIN itens_pedido ip ON prod.id_produto = ip.id_produto
     GROUP BY prod.categoria
@@ -86,7 +89,7 @@ def carregar_dados():
     # Query 4: Vendas ao longo do tempo (por mês)
     query_tempo = """
     SELECT 
-        DATE_FORMAT(p.data_pedido, '%%Y-%%m') as mes,
+        DATE_FORMAT(p.data_pedido, '%%Y-%%m-01') as mes,
         COUNT(p.id_pedido) AS total_pedidos,
         SUM(p.valor_total) AS receita
     FROM pedidos p
@@ -94,7 +97,7 @@ def carregar_dados():
     ORDER BY mes
     """
     df_tempo = pd.read_sql_query(query_tempo, conn)
-    df_tempo['mes'] = pd.to_datetime(df_tempo['mes'])
+    df_tempo['mes'] = pd.to_datetime(df_tempo['mes'], format='%Y-%m-%d')
     
     # Query 5: Status dos Pedidos
     query_status = """
